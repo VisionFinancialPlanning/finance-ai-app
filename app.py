@@ -76,10 +76,10 @@ def clasificar_batch(descripciones):
 st.title("💸 Clasificador Inteligente de Finanzas Personales")
 st.markdown("Sube tu archivo de transacciones (Excel o CSV) y el sistema clasificará tus gastos usando IA.")
 
-archivo = st.file_uploader("Sube tu archivo de transacciones", type=["xlsx", "csv"])
+archivo = st.file_uploader("Sube tu archivo de transacciones", type=["xlsx", "xls", "csv"])
 
 if archivo is not None:
-    if archivo.name.endswith(".xlsx"):
+    if archivo.name.endswith(".xlsx") or archivo.name.endswith(".xls"):
         # leer con encabezado en la primera fila con datos válidos
         df = pd.read_excel(archivo, header=None)
         df.columns = df.iloc[0]  # toma la primera fila como encabezado
