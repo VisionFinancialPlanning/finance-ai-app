@@ -90,12 +90,12 @@ if archivo is not None:
         st.dataframe(df)
 
         output = io.StringIO()
-        columnas_exportar = [col for col in [columna_fecha, columna_monto, 'Categoria AI'] if col in df.columns]
-
-        if len(columnas_exportar) < 3:
-            st.error("Tu archivo debe tener columnas llamadas 'Date'/'Fecha' y 'Amount'/'Monto' para poder exportar a Spendee.")
-        else:
-            df_export = df[columnas_exportar]
-            df_export.columns = ['Date', 'Amount', 'Category']
-            df_export.to_csv(output, index=False)
-            st.download_button("Descargar archivo para Spendee", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
+        df_export = df.copy()
+        df_export = df_export.rename(columns={
+            columna_fecha: 'Date',
+            columna_monto: 'Amount',
+            columna_nota: 'Note',
+            'Categoria AI': 'Category'
+        })
+        df_export.to_csv(output, index=False)
+        st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
