@@ -1,4 +1,5 @@
 streamlit
-openai>=1.1.0
 pandas
+openai
 openpyxl
+xlrd
