@@ -1,3 +1,4 @@
+// Interfaz web para el MVP de finanzas personales con IA (actualizado a API Chat v1)
 
 import streamlit as st
 import pandas as pd
@@ -11,22 +12,25 @@ if oai_key:
 else:
     st.warning("Agrega tu OpenAI API Key en los secretos de Streamlit.")
 
-# Función que usa IA para categorizar según la descripción
+# Función que usa IA (ChatCompletion) para categorizar según la descripción
 def categorizar_gasto_ai(descripcion):
     prompt = f"""
-    Categoriza esta transacción bancaria en una categoría financiera común (como 'Comida', 'Transporte', 'Salud', 'Vivienda', 'Entretenimiento', 'Servicios', 'Transferencias', 'Ingresos', 'Deuda', 'Compras'):
+    Categoriza esta transacción bancaria en una categoría financiera común (como 'Comida', 'Transporte', 'Salud', 'Vivienda', 'Entretenimiento', 'Servicios', 'Transferencias', 'Ingresos', 'Deuda', 'Compras').
+    Solo responde con la categoría:
 
     Descripción: {descripcion}
-    Categoría:
     """
 
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=20,
-        temperature=0.3
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "Eres un asistente que clasifica transacciones financieras."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.2,
+        max_tokens=10
     )
-    return response.choices[0].text.strip()
+    return response.choices[0].message['content'].strip()
 
 # App principal
 st.title("💸 Clasificador Inteligente de Finanzas Personales")
