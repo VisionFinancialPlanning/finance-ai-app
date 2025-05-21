@@ -49,6 +49,7 @@ def clasificar_batch(descripciones):
         "Si la transacción es un ingreso, como crédito de salario, bonificación, devolución de compra o transferencia recibida, clasificar como: 'Salario', 'Transferencias entrantes' u 'Other'.\n"
         "Si la columna del archivo se llama 'debit' o 'debitos', considera que es un gasto. Si se llama 'credit' o 'creditos', considera que es un ingreso.\n"
         "Si solo hay una columna llamada 'amount' o 'monto', considera que los valores negativos son gastos y los positivos ingresos.\n"
+        "También considera que algunas hojas de Excel pueden tener encabezados combinados. Lee la fila correcta con datos.\n"
         "Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'.\n\n"
     )
     prompt += "\n".join([f"{i+1}. {desc}" for i, desc in enumerate(descripciones)])
@@ -79,14 +80,17 @@ archivo = st.file_uploader("Sube tu archivo de transacciones", type=["xlsx", "cs
 
 if archivo is not None:
     if archivo.name.endswith(".xlsx"):
-        df = pd.read_excel(archivo)
+        # leer con encabezado en la primera fila con datos válidos
+        df = pd.read_excel(archivo, header=None)
+        df.columns = df.iloc[0]  # toma la primera fila como encabezado
+        df = df[1:].reset_index(drop=True)
     else:
         df = pd.read_csv(archivo)
 
     columnas = df.columns.str.lower()
-    columna_nota = next((col for col in df.columns if col.lower() in ['note', 'nota']), None)
-    columna_fecha = next((col for col in df.columns if col.lower() in ['date', 'fecha']), None)
-    columna_monto = next((col for col in df.columns if col.lower() in ['amount', 'monto', 'debit', 'credit', 'debitos', 'creditos']), None)
+    columna_nota = next((col for col in df.columns if str(col).lower() in ['note', 'nota']), None)
+    columna_fecha = next((col for col in df.columns if str(col).lower() in ['date', 'fecha']), None)
+    columna_monto = next((col for col in df.columns if str(col).lower() in ['amount', 'monto', 'debit', 'credit', 'debitos', 'creditos']), None)
 
     if not columna_nota:
         st.error("Tu archivo debe contener una columna llamada 'Note' o 'Nota' con la descripción del gasto.")
