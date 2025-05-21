@@ -1,4 +1,4 @@
-# Interfaz web para el MVP de finanzas personales con IA (optimizado con batch, categorías personalizadas y contexto regional Panamá y El Salvador)
+# Interfaz web para el MVP de finanzas personales con IA (optimizado con batch, categorías personalizadas y contexto regional ampliado para Centroamérica)
 
 import streamlit as st
 import pandas as pd
@@ -28,20 +28,22 @@ CATEGORIAS = [
     "Transferencias"
 ]
 
-# Función optimizada para clasificar múltiples descripciones con contexto local
+# Función optimizada para clasificar múltiples descripciones con contexto regional ampliado
 
 def clasificar_batch(descripciones):
     prompt = f"Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:\n" + "\n".join(CATEGORIAS) + "\n\n"
     prompt += (
-        "Ten en cuenta estos ejemplos de comercios y servicios en Panamá y El Salvador:\n"
-        "ENSA (Panamá): Hogar\n"
-        "Naturgy (Panamá): Hogar\n"
-        "CASAPLAN, EPA, Rodelag: Artículos de Hogar o Reparaciones\n"
-        "Pricesmart, Súper 99, Super Selectos, Rey, Romero: Supermercado\n"
-        "Yappy, Nequi, Transferencias BAC: Transferencias\n"
-        "Uber, DiDi, Tigo Money: Transporte o Transferencias\n"
-        "Davivienda, Banco Agrícola, BAC, Credomatic: si es pago de tarjeta, clasificar como Deudas.\n"
-        "Asegúrate de clasificar correctamente cualquier transacción que sea una transferencia bancaria o entre cuentas como 'Transferencias'.\n\n"
+        "Ten en cuenta estos ejemplos de comercios y servicios comunes en Centroamérica (Panamá, El Salvador, Guatemala, Honduras, Nicaragua, Costa Rica):\n"
+        "ENSA, Naturgy: Hogar\n"
+        "CASAPLAN, EPA, Rodelag, Cemaco, Construrama, Novex: Artículos de Hogar o Reparaciones\n"
+        "Pricesmart, Súper 99, Super Selectos, Rey, Romero, Mini Market, Orgánica, La Colonia, Walmart, Perimercados: Supermercado\n"
+        "Wix, Microsoft, Spotify, Netflix, Amazon, iCloud, Docusign, Disney+, YouTube Premium: Gastos Varios o Suscripciones\n"
+        "Centro de alergias, Clínicas médicas, Hospitales, Laboratorios: Gastos Médicos\n"
+        "Yappy, Nequi, Transferencias BAC, Sinpe, Tigo Money: Transferencias\n"
+        "Uber, DiDi, ENA corredores, Transmetro, TuBus, Movilízate: Transporte\n"
+        "Davivienda, Banco Agrícola, BAC, Credomatic, Banrural, Banco Industrial: si es pago de tarjeta o crédito, clasificar como Deudas.\n"
+        "Corte Argentino, restaurantes o comida rápida: Entretenimiento\n"
+        "Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'.\n\n"
     )
     prompt += "\n".join([f"{i+1}. {desc}" for i, desc in enumerate(descripciones)])
 
@@ -49,7 +51,7 @@ def clasificar_batch(descripciones):
         response = openai.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "Eres un asistente que clasifica transacciones bancarias para Panamá y El Salvador."},
+                {"role": "system", "content": "Eres un asistente que clasifica transacciones bancarias para usuarios en Centroamérica. Sé preciso y usa solo las categorías indicadas."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0.2,
