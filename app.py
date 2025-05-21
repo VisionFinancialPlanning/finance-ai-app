@@ -1,4 +1,4 @@
-# Interfaz web para el MVP de finanzas personales con IA (actualizado a API Chat v1)
+# Interfaz web para el MVP de finanzas personales con IA (actualizado a OpenAI v1.0+ API)
 
 import streamlit as st
 import pandas as pd
@@ -6,31 +6,33 @@ import openai
 import io
 
 # Configura tu API Key de OpenAI aquí
-oai_key = st.secrets["openai_key"] if "openai_key" in st.secrets else ""
-if oai_key:
-    openai.api_key = oai_key
-else:
-    st.warning("Agrega tu OpenAI API Key en los secretos de Streamlit.")
+openai.api_key = st.secrets.get("openai_key", "")
 
 # Función que usa IA (ChatCompletion) para categorizar según la descripción
 def categorizar_gasto_ai(descripcion):
+    if not descripcion.strip():
+        return "Sin descripción"
+
     prompt = f"""
-    Categoriza esta transacción bancaria en una categoría financiera común (como 'Comida', 'Transporte', 'Salud', 'Vivienda', 'Entretenimiento', 'Servicios', 'Transferencias', 'Ingresos', 'Deuda', 'Compras').
-    Solo responde con la categoría:
+    Categoriza esta transacción bancaria en una categoría financiera común. Escoge una de las siguientes: 'Comida', 'Transporte', 'Salud', 'Vivienda', 'Entretenimiento', 'Servicios', 'Transferencias', 'Ingresos', 'Deuda', 'Compras'.
 
     Descripción: {descripcion}
+    Categoría:
     """
 
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "Eres un asistente que clasifica transacciones financieras."},
-            {"role": "user", "content": prompt}
-        ],
-        temperature=0.2,
-        max_tokens=10
-    )
-    return response.choices[0].message['content'].strip()
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Eres un asistente que clasifica transacciones financieras."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.2,
+            max_tokens=10
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 # App principal
 st.title("💸 Clasificador Inteligente de Finanzas Personales")
