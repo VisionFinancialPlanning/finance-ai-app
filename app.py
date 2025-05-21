@@ -38,46 +38,31 @@ def clasificar_batch(descripciones):
     bloque = 50
     for i in range(0, len(descripciones), bloque):
         subset = descripciones[i:i + bloque]
-        prompt = f"Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
-" + "
-".join(CATEGORIAS) + "
+        instrucciones = """
+Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
+""" + "
+".join(CATEGORIAS) + """
 
-"
-        prompt += (
-            "Ten en cuenta estos ejemplos de comercios y servicios comunes en Centroamérica (Panamá, El Salvador, Guatemala, Honduras, Nicaragua, Costa Rica):
-"
-            "ENSA, Naturgy: Hogar
-"
-            "CASAPLAN, EPA, Rodelag, Cemaco, Construrama, Novex: Artículos de Hogar o Reparaciones
-"
-            "Pricesmart, Súper 99, Super Selectos, Rey, Romero, Mini Market, Orgánica, La Colonia, Walmart, Perimercados: Supermercado
-"
-            "Wix, Microsoft, Spotify, Netflix, Amazon, iCloud, Docusign, Disney+, YouTube Premium: Gastos Varios o Suscripciones
-"
-            "Centro de alergias, Clínicas médicas, Hospitales, Laboratorios: Gastos Médicos
-"
-            "Yappy, Nequi, Transferencias BAC, Sinpe, Tigo Money: Transferencias
-"
-            "Uber, DiDi, ENA corredores, Transmetro, TuBus, Movilízate: Transporte
-"
-            "Davivienda, Banco Agrícola, BAC, Credomatic, Banrural, Banco Industrial: si es pago de tarjeta o crédito, clasificar como Deudas.
-"
-            "Corte Argentino, restaurantes o comida rápida: Entretenimiento
-"
-            "Si la transacción es un ingreso, como crédito de salario, bonificación, devolución de compra o transferencia recibida, clasificar como: 'Salario', 'Transferencias entrantes' u 'Other'.
-"
-            "Si la columna del archivo se llama 'debit' o 'debitos', considera que es un gasto. Si se llama 'credit' o 'creditos', considera que es un ingreso.
-"
-            "Si solo hay una columna llamada 'amount' o 'monto', considera que los valores negativos son gastos y los positivos ingresos.
-"
-            "También considera que algunas hojas de Excel pueden tener encabezados combinados. Lee la fila correcta con datos.
-"
-            "Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'.
-
-"
-        )
-        prompt += "
+Ten en cuenta estos ejemplos de comercios y servicios comunes en Centroamérica (Panamá, El Salvador, Guatemala, Honduras, Nicaragua, Costa Rica):
+ENSA, Naturgy: Hogar
+CASAPLAN, EPA, Rodelag, Cemaco, Construrama, Novex: Artículos de Hogar o Reparaciones
+Pricesmart, Súper 99, Super Selectos, Rey, Romero, Mini Market, Orgánica, La Colonia, Walmart, Perimercados: Supermercado
+Wix, Microsoft, Spotify, Netflix, Amazon, iCloud, Docusign, Disney+, YouTube Premium: Gastos Varios o Suscripciones
+Centro de alergias, Clínicas médicas, Hospitales, Laboratorios: Gastos Médicos
+Yappy, Nequi, Transferencias BAC, Sinpe, Tigo Money: Transferencias
+Uber, DiDi, ENA corredores, Transmetro, TuBus, Movilízate: Transporte
+Davivienda, Banco Agrícola, BAC, Credomatic, Banrural, Banco Industrial: si es pago de tarjeta o crédito, clasificar como Deudas.
+Corte Argentino, restaurantes o comida rápida: Entretenimiento
+Si la transacción es un ingreso, como crédito de salario, bonificación, devolución de compra o transferencia recibida, clasificar como: 'Salario', 'Transferencias entrantes' u 'Other'.
+Si la columna del archivo se llama 'debit' o 'debitos', considera que es un gasto. Si se llama 'credit' o 'creditos', considera que es un ingreso.
+Si solo hay una columna llamada 'amount' o 'monto', considera que los valores negativos son gastos y los positivos ingresos.
+También considera que algunas hojas de Excel pueden tener encabezados combinados. Lee la fila correcta con datos.
+Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'.
+"""
+        lista_transacciones = "
 ".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
+        prompt = instrucciones + "
+" + lista_transacciones
 
         try:
             response = openai.chat.completions.create(
