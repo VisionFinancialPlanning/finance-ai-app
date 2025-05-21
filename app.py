@@ -57,6 +57,8 @@ def clasificar_batch(descripciones):
         )
         salida = response.choices[0].message.content.strip().split("\n")
         categorias = [line.strip().split(". ", 1)[-1] for line in salida if line.strip()]
+        if len(categorias) != len(descripciones):
+            raise ValueError("La cantidad de categorías devueltas no coincide con las descripciones procesadas.")
         return categorias
     except Exception as e:
         return [f"Error: {str(e)}"] * len(descripciones)
@@ -84,18 +86,21 @@ if archivo is not None:
         st.info("Clasificando gastos con IA en bloques...")
         descripciones = df[columna_nota].fillna('').astype(str).tolist()
         categorias = clasificar_batch(descripciones)
-        df['Categoria AI'] = categorias[:len(df)]
+        if len(categorias) == len(df):
+            df['Categoria AI'] = categorias
 
-        st.success("¡Listo! Aquí están tus datos clasificados:")
-        st.dataframe(df)
+            st.success("¡Listo! Aquí están tus datos clasificados:")
+            st.dataframe(df)
 
-        output = io.StringIO()
-        df_export = df.copy()
-        df_export = df_export.rename(columns={
-            columna_fecha: 'Date',
-            columna_monto: 'Amount',
-            columna_nota: 'Note',
-            'Categoria AI': 'Category'
-        })
-        df_export.to_csv(output, index=False)
-        st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
+            output = io.StringIO()
+            df_export = df.copy()
+            df_export = df_export.rename(columns={
+                columna_fecha: 'Date',
+                columna_monto: 'Amount',
+                columna_nota: 'Note',
+                'Categoria AI': 'Category'
+            })
+            df_export.to_csv(output, index=False)
+            st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
+        else:
+            st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
