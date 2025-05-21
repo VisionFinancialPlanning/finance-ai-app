@@ -56,10 +56,10 @@ Si la columna del archivo se llama 'debit' o 'debitos', considera que es un gast
 Si solo hay una columna llamada 'amount' o 'monto', considera que los valores negativos son gastos y los positivos ingresos.
 También considera que algunas hojas de Excel pueden tener encabezados combinados. Lee la fila correcta con datos.
 Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'."""
-        lista_transacciones = '
-'.join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
-        prompt = instrucciones + '
-' + lista_transacciones
+        lista_transacciones = "
+".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
+        prompt = instrucciones + "
+" + lista_transacciones
 
         try:
             response = openai.chat.completions.create(
@@ -71,8 +71,8 @@ Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Tra
                 temperature=0.2,
                 max_tokens=1500
             )
-            salida = response.choices[0].message.content.strip().split('
-')
+            salida = response.choices[0].message.content.strip().split("
+")
             categorias = [line.strip().split(". ", 1)[-1] for line in salida if line.strip()]
             categorias_totales.extend(categorias)
         except Exception as e:
@@ -81,8 +81,6 @@ Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Tra
     if len(categorias_totales) != len(descripciones):
         raise ValueError("La cantidad de categorías devueltas no coincide con las descripciones procesadas.")
     return categorias_totales
-    except Exception as e:
-        return [f"Error: {str(e)}"] * len(descripciones)
 
 # App principal
 st.title("💸 Clasificador Inteligente de Finanzas Personales")
