@@ -38,10 +38,8 @@ def clasificar_batch(descripciones):
     bloque = 50
     for i in range(0, len(descripciones), bloque):
         subset = descripciones[i:i + bloque]
-        instrucciones = """
-Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
-""" + "
-".join(CATEGORIAS) + """
+        instrucciones = f"""Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
+{chr(10).join(CATEGORIAS)}
 
 Ten en cuenta estos ejemplos de comercios y servicios comunes en Centroamérica (Panamá, El Salvador, Guatemala, Honduras, Nicaragua, Costa Rica):
 ENSA, Naturgy: Hogar
@@ -57,8 +55,7 @@ Si la transacción es un ingreso, como crédito de salario, bonificación, devol
 Si la columna del archivo se llama 'debit' o 'debitos', considera que es un gasto. Si se llama 'credit' o 'creditos', considera que es un ingreso.
 Si solo hay una columna llamada 'amount' o 'monto', considera que los valores negativos son gastos y los positivos ingresos.
 También considera que algunas hojas de Excel pueden tener encabezados combinados. Lee la fila correcta con datos.
-Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'.
-"""
+Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'."""
         lista_transacciones = "
 ".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
         prompt = instrucciones + "
