@@ -99,7 +99,7 @@ if archivo is not None:
     columna_monto = next((col for col in df.columns if str(col).lower() in ['amount', 'monto', 'dolares', 'usd', 'importe', 'valor', 'debit', 'credit', 'debitos', 'creditos']), None)
 
     if not columna_nota:
-        st.error("Tu archivo debe contener una columna llamada 'Note' o 'Nota' con la descripción del gasto.")
+        st.error("Tu archivo debe contener una columna con la descripción del gasto, como 'Nota', 'Descripción', 'Detalle', 'Concepto' o similares.")
     else:
         st.info("Clasificando gastos con IA en bloques...")
         descripciones = df[columna_nota].fillna('').astype(str).tolist()
