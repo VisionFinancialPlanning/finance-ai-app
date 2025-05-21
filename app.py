@@ -1,4 +1,4 @@
-// Interfaz web para el MVP de finanzas personales con IA (actualizado a API Chat v1)
+# Interfaz web para el MVP de finanzas personales con IA (actualizado a API Chat v1)
 
 import streamlit as st
 import pandas as pd
