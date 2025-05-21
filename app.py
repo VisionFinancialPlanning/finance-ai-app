@@ -25,7 +25,10 @@ CATEGORIAS = [
     "Gastos Varios",
     "Inversiones a largo plazo",
     "Educación",
-    "Transferencias"
+    "Transferencias",
+    "Transferencias entrantes",
+    "Salario",
+    "Other"
 ]
 
 # Función optimizada para clasificar múltiples descripciones con contexto regional ampliado
@@ -43,6 +46,9 @@ def clasificar_batch(descripciones):
         "Uber, DiDi, ENA corredores, Transmetro, TuBus, Movilízate: Transporte\n"
         "Davivienda, Banco Agrícola, BAC, Credomatic, Banrural, Banco Industrial: si es pago de tarjeta o crédito, clasificar como Deudas.\n"
         "Corte Argentino, restaurantes o comida rápida: Entretenimiento\n"
+        "Si la transacción es un ingreso, como crédito de salario, bonificación, devolución de compra o transferencia recibida, clasificar como: 'Salario', 'Transferencias entrantes' u 'Other'.\n"
+        "Si la columna del archivo se llama 'debit' o 'debitos', considera que es un gasto. Si se llama 'credit' o 'creditos', considera que es un ingreso.\n"
+        "Si solo hay una columna llamada 'amount' o 'monto', considera que los valores negativos son gastos y los positivos ingresos.\n"
         "Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'.\n\n"
     )
     prompt += "\n".join([f"{i+1}. {desc}" for i, desc in enumerate(descripciones)])
@@ -80,7 +86,7 @@ if archivo is not None:
     columnas = df.columns.str.lower()
     columna_nota = next((col for col in df.columns if col.lower() in ['note', 'nota']), None)
     columna_fecha = next((col for col in df.columns if col.lower() in ['date', 'fecha']), None)
-    columna_monto = next((col for col in df.columns if col.lower() in ['amount', 'monto']), None)
+    columna_monto = next((col for col in df.columns if col.lower() in ['amount', 'monto', 'debit', 'credit', 'debitos', 'creditos']), None)
 
     if not columna_nota:
         st.error("Tu archivo debe contener una columna llamada 'Note' o 'Nota' con la descripción del gasto.")
