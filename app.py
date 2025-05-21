@@ -84,6 +84,8 @@ if archivo is not None:
         df = pd.read_excel(archivo, header=None)
         df.columns = df.iloc[0]  # toma la primera fila como encabezado
         df = df[1:].reset_index(drop=True)
+        df.columns = df.columns.fillna("Unknown")
+        df.columns = df.columns.astype(str)
     else:
         df = pd.read_csv(archivo)
 
