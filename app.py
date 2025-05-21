@@ -94,9 +94,9 @@ if archivo is not None:
         df = pd.read_csv(archivo)
 
     columnas = df.columns.str.lower()
-    columna_nota = next((col for col in df.columns if str(col).lower() in ['note', 'nota']), None)
-    columna_fecha = next((col for col in df.columns if str(col).lower() in ['date', 'fecha']), None)
-    columna_monto = next((col for col in df.columns if str(col).lower() in ['amount', 'monto', 'debit', 'credit', 'debitos', 'creditos']), None)
+    columna_nota = next((col for col in df.columns if str(col).lower() in ['note', 'nota', 'descripcion', 'descripción', 'detalle', 'concepto', 'glosa']), None)
+    columna_fecha = next((col for col in df.columns if str(col).lower() in ['date', 'fecha', 'fecha operación', 'fecha transacción', 'f. operación', 'f. transacción', 'f. mov']), None)
+    columna_monto = next((col for col in df.columns if str(col).lower() in ['amount', 'monto', 'dolares', 'usd', 'importe', 'valor', 'debit', 'credit', 'debitos', 'creditos']), None)
 
     if not columna_nota:
         st.error("Tu archivo debe contener una columna llamada 'Note' o 'Nota' con la descripción del gasto.")
@@ -116,10 +116,10 @@ if archivo is not None:
             output = io.StringIO()
             df_export = df.copy()
             df_export = df_export.rename(columns={
-                columna_fecha: 'Date',
-                columna_monto: 'Amount',
-                columna_nota: 'Note',
-                'Categoria AI': 'Category'
+                columna_fecha: 'Fecha',
+                columna_monto: 'Monto',
+                columna_nota: 'Nota',
+                'Categoria AI': 'Categoría'
             })
             df_export.to_csv(output, index=False)
             st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
