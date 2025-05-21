@@ -46,16 +46,26 @@ if archivo is not None:
     else:
         df = pd.read_csv(archivo)
 
-    if 'Note' not in df.columns:
-        st.error("Tu archivo debe contener una columna llamada 'Note' con la descripción del gasto.")
+    columnas = df.columns.str.lower()
+    columna_nota = next((col for col in df.columns if col.lower() in ['note', 'nota']), None)
+    columna_fecha = next((col for col in df.columns if col.lower() in ['date', 'fecha']), None)
+    columna_monto = next((col for col in df.columns if col.lower() in ['amount', 'monto']), None)
+
+    if not columna_nota:
+        st.error("Tu archivo debe contener una columna llamada 'Note' o 'Nota' con la descripción del gasto.")
     else:
         st.info("Clasificando gastos con IA, esto puede tomar unos segundos...")
-        df['Categoria AI'] = df['Note'].fillna('').apply(categorizar_gasto_ai)
+        df['Categoria AI'] = df[columna_nota].fillna('').apply(categorizar_gasto_ai)
         st.success("¡Listo! Aquí están tus datos clasificados:")
         st.dataframe(df)
 
         output = io.StringIO()
-        df_export = df[['Date', 'Amount', 'Categoria AI']]
-        df_export.columns = ['Date', 'Amount', 'Category']
-        df_export.to_csv(output, index=False)
-        st.download_button("Descargar archivo para Spendee", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
+        columnas_exportar = [col for col in [columna_fecha, columna_monto, 'Categoria AI'] if col in df.columns]
+
+        if len(columnas_exportar) < 3:
+            st.error("Tu archivo debe tener columnas llamadas 'Date'/'Fecha' y 'Amount'/'Monto' para poder exportar a Spendee.")
+        else:
+            df_export = df[columnas_exportar]
+            df_export.columns = ['Date', 'Amount', 'Category']
+            df_export.to_csv(output, index=False)
+            st.download_button("Descargar archivo para Spendee", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
