@@ -84,8 +84,12 @@ if archivo is not None:
         df = pd.read_excel(archivo, header=None)
         df.columns = df.iloc[0]  # toma la primera fila como encabezado
         df = df[1:].reset_index(drop=True)
+        df = df.dropna(how='all')  # elimina filas completamente vacías
+        df = df.loc[:, ~df.columns.isna()]  # elimina columnas vacías
         df.columns = df.columns.fillna("Unknown")
         df.columns = df.columns.astype(str)
+        if df.columns.duplicated().any():
+            df.columns = pd.io.parsers.ParserBase({'names': df.columns})._maybe_dedup_names(df.columns)
     else:
         df = pd.read_csv(archivo)
 
@@ -104,7 +108,10 @@ if archivo is not None:
             df['Categoria AI'] = categorias
 
             st.success("¡Listo! Aquí están tus datos clasificados:")
-            st.dataframe(df)
+            try:
+                st.dataframe(df)
+            except Exception as e:
+                st.warning(f"No se pudo mostrar la tabla completa. {str(e)}")
 
             output = io.StringIO()
             df_export = df.copy()
