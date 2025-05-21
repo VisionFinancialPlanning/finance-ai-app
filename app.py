@@ -31,16 +31,16 @@ CATEGORIAS = [
 # Función optimizada para clasificar múltiples descripciones con contexto local
 
 def clasificar_batch(descripciones):
-    prompt = f"Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:\n- " + "\n- ".join(CATEGORIAS) + "\n\n"
+    prompt = f"Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:\n" + "\n".join(CATEGORIAS) + "\n\n"
     prompt += (
         "Ten en cuenta estos ejemplos de comercios y servicios en Panamá y El Salvador:\n"
-        "- ENSA (Panamá): Hogar\n"
-        "- Naturgy (Panamá): Hogar\n"
-        "- CASAPLAN, EPA, Rodelag: Artículos de Hogar o Reparaciones\n"
-        "- Pricesmart, Súper 99, Super Selectos, Rey, Romero: Supermercado\n"
-        "- Yappy, Nequi, Transferencias BAC: Transferencias\n"
-        "- Uber, DiDi, Tigo Money: Transporte o Transferencias\n"
-        "- Davivienda, Banco Agrícola, BAC, Credomatic: si es pago de tarjeta, clasificar como Deudas.\n"
+        "ENSA (Panamá): Hogar\n"
+        "Naturgy (Panamá): Hogar\n"
+        "CASAPLAN, EPA, Rodelag: Artículos de Hogar o Reparaciones\n"
+        "Pricesmart, Súper 99, Super Selectos, Rey, Romero: Supermercado\n"
+        "Yappy, Nequi, Transferencias BAC: Transferencias\n"
+        "Uber, DiDi, Tigo Money: Transporte o Transferencias\n"
+        "Davivienda, Banco Agrícola, BAC, Credomatic: si es pago de tarjeta, clasificar como Deudas.\n"
         "Asegúrate de clasificar correctamente cualquier transacción que sea una transferencia bancaria o entre cuentas como 'Transferencias'.\n\n"
     )
     prompt += "\n".join([f"{i+1}. {desc}" for i, desc in enumerate(descripciones)])
