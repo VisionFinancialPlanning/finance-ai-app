@@ -32,9 +32,31 @@ HISTORIAL_CATEGORIAS = {}
 def clasificar_batch(descripciones):
     categorias_totales = []
     bloque = 50
+    categorias_totales = []
+    bloque = 50
     for i in range(0, len(descripciones), bloque):
         subset = descripciones[i:i + bloque]
-        instrucciones = f"""Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
+        categorias = []
+        nuevas = []
+
+        for desc in subset:
+            desc_lower = desc.lower()
+            if desc in HISTORIAL_CATEGORIAS:
+                categorias.append(HISTORIAL_CATEGORIAS[desc])
+            else:
+                asignada = None
+                for categoria, palabras in PALABRAS_CLAVE.items():
+                    if any(palabra in desc_lower for palabra in palabras):
+                        asignada = categoria
+                        break
+                if asignada:
+                    HISTORIAL_CATEGORIAS[desc] = asignada
+                    categorias.append(asignada)
+                else:
+                    nuevas.append(desc)
+
+        if nuevas:
+            instrucciones = f"""Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
 {chr(10).join(CATEGORIAS)}
 
 Ten en cuenta que los siguientes son solo ejemplos de comercios y servicios comunes en Centroamérica. Usa este listado como guía, pero también debes categorizar correctamente otras marcas o nombres nuevos que no estén mencionados:
@@ -46,16 +68,18 @@ Yappy, Nequi, SINPE, Transferencia entre cuentas: Transferencias
 Uber, DiDi, ENA corredores, Gasolina Terpel, Uno, Puma: Transporte
 Davivienda, Banco Agrícola, BAC, Credomatic, Banrural: Deudas
 Corte Argentino, Dominos, Pizza Hut, Starbucks, KFC, Rausch, McDonalds: Entretenimiento
-Asegúrate de que si la nota contiene la palabra "Uber", se clasifique como Transporte. Si contiene otra palabra, clasifícala según el contexto general, sin asumir automáticamente que es Transporte.
-Si dos notas tienen el mismo texto (por ejemplo, dos transacciones que dicen "Uber"), deben recibir la misma categoría.
+Asegúrate de que si la nota contiene la palabra \"Uber\", se clasifique como Transporte. Si contiene otra palabra, clasifícala según el contexto general, sin asumir automáticamente que es Transporte.
+Si dos notas tienen el mismo texto (por ejemplo, dos transacciones que dicen \"Uber\"), deben recibir la misma categoría.
 Si es ingreso: Salario, Transferencias entrantes u Other
 Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es gasto
 """
-        lista_transacciones = "\n".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
-        prompt = instrucciones + "\n" + lista_transacciones
+            lista_transacciones = "
+".join([f"{j+1}. {desc}" for j, desc in enumerate(nuevas)])
+            prompt = instrucciones + "
+" + lista_transacciones
 
-        try:
-            response = openai.chat.completions.create(
+            try:
+                response = openai.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "Eres un asistente experto en clasificar finanzas personales en Centroamérica."},
@@ -126,4 +150,3 @@ if archivo is not None:
             st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
         else:
             st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
-
