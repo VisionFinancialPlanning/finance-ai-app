@@ -23,12 +23,14 @@ def clasificar_batch(descripciones):
 Ten en cuenta estos ejemplos de comercios y servicios comunes en Centroamérica:
 ENSA, Naturgy: Hogar
 Pricesmart, Súper 99, Super Selectos, Walmart, Orgánica, Riba Smith, El Rey, Xtra, La Colonia, Maxi Despensa: Supermercado
-Wix, Microsoft, Netflix, Adobe, Canva, Docusign: Suscripciones
+Wix, Microsoft, Netflix, Adobe, Canva, Docusign, Facebook: Suscripciones
 Centro de alergias, Hospital Nacional, Laboratorios Centroamericanos: Gastos Médicos
 Yappy, Nequi, SINPE, Transferencia entre cuentas: Transferencias
-Uber, DiDi, ENA corredores, Gasolina Terpel, Uno, Puma: Transporte
+Uber, DiDi, ENA corredores, Gasolina Terpel, Uno, Puma, Tigo: Transporte
 Davivienda, Banco Agrícola, BAC, Credomatic, Banrural: Deudas
 Corte Argentino, Dominos, Pizza Hut, Starbucks, KFC, Rausch, McDonalds: Entretenimiento
+Asegúrate de que si la nota contiene la palabra "Uber", se clasifique como Transporte. Si contiene otra palabra, clasifícala según el contexto general, sin asumir automáticamente que es Transporte.
+Si dos notas tienen el mismo texto (por ejemplo, dos transacciones que dicen "Uber"), deben recibir la misma categoría.
 Si es ingreso: Salario, Transferencias entrantes u Other
 Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es gasto
 """
