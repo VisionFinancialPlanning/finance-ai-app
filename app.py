@@ -14,12 +14,12 @@ CATEGORIAS = [
 
 # Diccionario de palabras clave por categoría (usado para consistencia y refuerzo)
 PALABRAS_CLAVE = {
-    "Transporte": ["uber", "didi", "ena", "terpel", "puma", "gasolina", "movilízate"],
-    "Supermercado": ["pricesmart", "súper 99", "riba smith", "xtra", "orgánica", "maxi despensa", "la colonia", "rey"],
+    "Transporte": ["uber", "didi", "ena", "terpel", "puma", "gasolina", "movilízate", "texaco"],
+    "Supermercado": ["pricesmart", "súper 99", "riba smith", "xtra", "orgánica", "maxi despensa", "la colonia", "rey", "riba"],
     "Suscripciones": ["netflix", "spotify", "amazon", "adobe", "microsoft", "facebook", "canva", "wix"],
     "Gastos Médicos": ["alergias", "hospital", "laboratorio", "clínica", "médico", "odontólogo", "medicina"],
     "Entretenimiento": ["pizza hut", "kfc", "dominos", "starbucks", "cine", "restaurante", "mcdonalds", "paseo"],
-    "Hogar": ["ensa", "naturgy", "alcaldía", "agua", "internet", "electricidad", "gas"],
+    "Hogar": ["ensa", "naturgy", "alcaldía", "agua", "internet", "electricidad", "gas", "tigo","Digicel","Mas movil","Movistar"],
     "Deudas": ["davivienda", "credito", "bac", "pago tarjeta", "cuota", "intereses"],
     "Transferencias": ["yappy", "nequi", "sinpe", "transferencia", "mismo titular"],
     "Salario": ["salario", "pago planilla"],
