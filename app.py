@@ -22,12 +22,13 @@ def clasificar_batch(descripciones):
 
 Ten en cuenta estos ejemplos de comercios y servicios comunes en Centroamérica:
 ENSA, Naturgy: Hogar
-Pricesmart, Súper 99, Super Selectos, Walmart, etc: Supermercado
-Wix, Microsoft, Netflix: Suscripciones
-Centro de alergias: Gastos Médicos
-Yappy, Nequi, SINPE: Transferencias
-Uber, DiDi, ENA corredores: Transporte
-Davivienda, Banco Agrícola: Deudas
+Pricesmart, Súper 99, Super Selectos, Walmart, Orgánica, Riba Smith, El Rey, Xtra, La Colonia, Maxi Despensa: Supermercado
+Wix, Microsoft, Netflix, Adobe, Canva, Docusign: Suscripciones
+Centro de alergias, Hospital Nacional, Laboratorios Centroamericanos: Gastos Médicos
+Yappy, Nequi, SINPE, Transferencia entre cuentas: Transferencias
+Uber, DiDi, ENA corredores, Gasolina Terpel, Uno, Puma: Transporte
+Davivienda, Banco Agrícola, BAC, Credomatic, Banrural: Deudas
+Corte Argentino, Dominos, Pizza Hut, Starbucks, KFC, Rausch, McDonalds: Entretenimiento
 Si es ingreso: Salario, Transferencias entrantes u Other
 Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es gasto
 """
