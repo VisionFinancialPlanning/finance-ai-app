@@ -31,10 +31,8 @@ Davivienda, Banco Agrícola: Deudas
 Si es ingreso: Salario, Transferencias entrantes u Other
 Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es gasto
 """
-        lista_transacciones = "
-".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
-        prompt = instrucciones + "
-" + lista_transacciones
+        lista_transacciones = "\n".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
+        prompt = instrucciones + "\n" + lista_transacciones
 
         try:
             response = openai.chat.completions.create(
@@ -46,12 +44,8 @@ Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es ga
                 temperature=0.2,
                 max_tokens=1500
             )
-            salida = response.choices[0].message.content.strip().split("
-")
+            salida = response.choices[0].message.content.strip().split("\n")
             categorias = salida[:len(subset)]
-            while len(categorias) < len(subset):
-                categorias.append("No clasificado")
-            )
             while len(categorias) < len(subset):
                 categorias.append("No clasificado")
             categorias_totales.extend(categorias)
@@ -112,7 +106,4 @@ if archivo is not None:
             st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
         else:
             st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
-
-
-
 
