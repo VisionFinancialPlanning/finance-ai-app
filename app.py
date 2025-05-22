@@ -14,7 +14,7 @@ CATEGORIAS = [
 
 # Diccionario de palabras clave por categoría (usado para consistencia y refuerzo)
 PALABRAS_CLAVE = {
-    "Transporte": ["uber", "didi", "ena", "terpel", "puma", "gasolina", "movilízate", "texaco"],
+    "Transporte": ["uber", "didi", "ena", "terpel", "puma", "gasolina", "texaco"],
     "Supermercado": ["pricesmart", "súper 99", "riba smith", "xtra", "orgánica", "maxi despensa", "la colonia", "rey", "riba"],
     "Suscripciones": ["netflix", "spotify", "amazon", "adobe", "microsoft", "facebook", "canva", "wix"],
     "Gastos Médicos": ["alergias", "hospital", "laboratorio", "clínica", "médico", "odontólogo", "medicina"],
@@ -126,3 +126,4 @@ if archivo is not None:
             st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
         else:
             st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
+
