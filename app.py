@@ -12,21 +12,19 @@ CATEGORIAS = [
     "Transferencias entrantes", "Salario", "Other"
 ]
 
-# Diccionario de palabras clave por categoría (usado para consistencia y refuerzo)
 PALABRAS_CLAVE = {
     "Transporte": ["uber", "didi", "ena", "terpel", "puma", "gasolina", "texaco"],
     "Supermercado": ["pricesmart", "súper 99", "riba smith", "xtra", "orgánica", "maxi despensa", "la colonia", "rey", "riba"],
     "Suscripciones": ["netflix", "spotify", "amazon", "adobe", "microsoft", "facebook", "canva", "wix"],
     "Gastos Médicos": ["alergias", "hospital", "laboratorio", "clínica", "médico", "odontólogo", "medicina"],
     "Entretenimiento": ["pizza hut", "kfc", "dominos", "starbucks", "cine", "restaurante", "mcdonalds", "paseo"],
-    "Hogar": ["ensa", "naturgy", "alcaldía", "agua", "internet", "electricidad", "gas", "tigo","Digicel","Mas movil","Movistar"],
+    "Hogar": ["ensa", "naturgy", "alcaldía", "agua", "internet", "electricidad", "gas", "tigo","digicel","mas movil","movistar"],
     "Deudas": ["davivienda", "credito", "bac", "pago tarjeta", "cuota", "intereses"],
     "Transferencias": ["yappy", "nequi", "sinpe", "transferencia", "mismo titular"],
     "Salario": ["salario", "pago planilla"],
     "Transferencias entrantes": ["abono", "ingreso recibido", "remesa"]
 }
 
-# Historial para mantener consistencia
 HISTORIAL_CATEGORIAS = {}
 
 def clasificar_batch(descripciones):
@@ -70,11 +68,8 @@ Si dos notas tienen el mismo texto (por ejemplo, dos transacciones que dicen \"U
 Si es ingreso: Salario, Transferencias entrantes u Other
 Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es gasto"""
 
-        lista_transacciones = "
-".join([f"{j+1}. {desc}" for j, desc in enumerate(nuevas)])
-        prompt = instrucciones + "
-" + lista_transacciones
-
+        lista_transacciones = "\n".join([f"{j+1}. {desc}" for j, desc in enumerate(nuevas)])
+        prompt = instrucciones + "\n" + lista_transacciones
         try:
             response = openai.chat.completions.create(
                 model="gpt-3.5-turbo",
@@ -85,8 +80,7 @@ Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es ga
                 temperature=0.2,
                 max_tokens=1500
             )
-            salida = response.choices[0].message.content.strip().split("
-")
+            salida = response.choices[0].message.content.strip().split("\n")
             for i, categoria in enumerate(salida[:len(nuevas)]):
                 categorias_totales[posiciones_nuevas[i]] = categoria
                 HISTORIAL_CATEGORIAS[nuevas[i]] = categoria
