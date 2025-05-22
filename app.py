@@ -56,11 +56,9 @@ Si la columna del archivo se llama 'debit' o 'debitos', considera que es un gast
 Si solo hay una columna llamada 'amount' o 'monto', considera que los valores negativos son gastos y los positivos ingresos.
 También considera que algunas hojas de Excel pueden tener encabezados combinados. Lee la fila correcta con datos.
 Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Transferencias'."""
-        lista_transacciones =
+        lista_transacciones = "
 ".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
         prompt = instrucciones + "
-" + lista_transacciones
-" + lista_transacciones"
 " + lista_transacciones
 
         try:
@@ -137,4 +135,5 @@ if archivo is not None:
             st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
         else:
             st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
+
 
