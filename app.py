@@ -31,32 +31,29 @@ HISTORIAL_CATEGORIAS = {}
 
 def clasificar_batch(descripciones):
     categorias_totales = []
-    bloque = 50
-    categorias_totales = []
-    bloque = 50
-    for i in range(0, len(descripciones), bloque):
-        subset = descripciones[i:i + bloque]
-        categorias = []
-        nuevas = []
+    nuevas = []
+    posiciones_nuevas = []
 
-        for desc in subset:
-            desc_lower = desc.lower()
-            if desc in HISTORIAL_CATEGORIAS:
-                categorias.append(HISTORIAL_CATEGORIAS[desc])
+    for i, desc in enumerate(descripciones):
+        desc_lower = desc.lower()
+        if desc in HISTORIAL_CATEGORIAS:
+            categorias_totales.append(HISTORIAL_CATEGORIAS[desc])
+        else:
+            asignada = None
+            for categoria, palabras in PALABRAS_CLAVE.items():
+                if any(palabra in desc_lower for palabra in palabras):
+                    asignada = categoria
+                    break
+            if asignada:
+                HISTORIAL_CATEGORIAS[desc] = asignada
+                categorias_totales.append(asignada)
             else:
-                asignada = None
-                for categoria, palabras in PALABRAS_CLAVE.items():
-                    if any(palabra in desc_lower for palabra in palabras):
-                        asignada = categoria
-                        break
-                if asignada:
-                    HISTORIAL_CATEGORIAS[desc] = asignada
-                    categorias.append(asignada)
-                else:
-                    nuevas.append(desc)
+                categorias_totales.append(None)
+                nuevas.append(desc)
+                posiciones_nuevas.append(i)
 
-        if nuevas:
-            instrucciones = f"""Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
+    if nuevas:
+        instrucciones = f"""Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
 {chr(10).join(CATEGORIAS)}
 
 Ten en cuenta que los siguientes son solo ejemplos de comercios y servicios comunes en Centroamérica. Usa este listado como guía, pero también debes categorizar correctamente otras marcas o nombres nuevos que no estén mencionados:
@@ -71,15 +68,15 @@ Corte Argentino, Dominos, Pizza Hut, Starbucks, KFC, Rausch, McDonalds: Entreten
 Asegúrate de que si la nota contiene la palabra \"Uber\", se clasifique como Transporte. Si contiene otra palabra, clasifícala según el contexto general, sin asumir automáticamente que es Transporte.
 Si dos notas tienen el mismo texto (por ejemplo, dos transacciones que dicen \"Uber\"), deben recibir la misma categoría.
 Si es ingreso: Salario, Transferencias entrantes u Other
-Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es gasto
-"""
-            lista_transacciones = "
+Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es gasto"""
+
+        lista_transacciones = "
 ".join([f"{j+1}. {desc}" for j, desc in enumerate(nuevas)])
-            prompt = instrucciones + "
+        prompt = instrucciones + "
 " + lista_transacciones
 
-            try:
-                response = openai.chat.completions.create(
+        try:
+            response = openai.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "Eres un asistente experto en clasificar finanzas personales en Centroamérica."},
@@ -88,19 +85,22 @@ Si el monto es positivo en 'amount' o 'monto': es ingreso; si es negativo: es ga
                 temperature=0.2,
                 max_tokens=1500
             )
-            salida = response.choices[0].message.content.strip().split("\n")
-            categorias = salida[:len(subset)]
-            while len(categorias) < len(subset):
-                categorias.append("No clasificado")
-            categorias_totales.extend(categorias)
+            salida = response.choices[0].message.content.strip().split("
+")
+            for i, categoria in enumerate(salida[:len(nuevas)]):
+                categorias_totales[posiciones_nuevas[i]] = categoria
+                HISTORIAL_CATEGORIAS[nuevas[i]] = categoria
+            for j in range(len(nuevas), len(posiciones_nuevas)):
+                categorias_totales[posiciones_nuevas[j]] = "No clasificado"
         except Exception as e:
-            categorias_totales.extend([f"Error: {str(e)}"] * len(subset))
+            for i in posiciones_nuevas:
+                categorias_totales[i] = f"Error: {str(e)}"
 
     return categorias_totales
 
 # Interfaz Streamlit
-st.title("💸 Clasificador Inteligente de Finanzas Personales")
-st.markdown("Sube tu archivo de transacciones (Excel o CSV) y el sistema clasificará tus gastos usando IA.")
+st.title("🔍 Categorizador de Transacciones Personales con IA")
+st.markdown("Vision Financial Planning IA")
 
 archivo = st.file_uploader("Sube tu archivo de transacciones", type=["xlsx", "xls", "csv"])
 
@@ -150,3 +150,4 @@ if archivo is not None:
             st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
         else:
             st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
+
