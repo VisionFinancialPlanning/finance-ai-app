@@ -59,6 +59,7 @@ Clasifica correctamente cualquier transferencia bancaria entre cuentas como 'Tra
         lista_transacciones = "
 ".join([f"{j+1}. {desc}" for j, desc in enumerate(subset)])
         prompt = instrucciones + "
+" + lista_transacciones"
 " + lista_transacciones
 
         try:
