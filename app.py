@@ -20,13 +20,13 @@ def clasificar_batch(descripciones):
         instrucciones = f"""Clasifica las siguientes transacciones. Devuélveme solo una categoría por línea, usando únicamente alguna de estas categorías:
 {chr(10).join(CATEGORIAS)}
 
-Ten en cuenta estos ejemplos de comercios y servicios comunes en Centroamérica:
-ENSA, Naturgy: Hogar
+Ten en cuenta que los siguientes son solo ejemplos de comercios y servicios comunes en Centroamérica. Usa este listado como guía, pero también debes categorizar correctamente otras marcas o nombres nuevos que no estén mencionados:
+ENSA, Naturgy, Tigo, Mas movil: Hogar
 Pricesmart, Súper 99, Super Selectos, Walmart, Orgánica, Riba Smith, El Rey, Xtra, La Colonia, Maxi Despensa: Supermercado
-Wix, Microsoft, Netflix, Adobe, Canva, Docusign, Facebook: Suscripciones
+Wix, Microsoft, Netflix, Adobe, Canva, Docusign, Facebook, facebk: Suscripciones
 Centro de alergias, Hospital Nacional, Laboratorios Centroamericanos: Gastos Médicos
 Yappy, Nequi, SINPE, Transferencia entre cuentas: Transferencias
-Uber, DiDi, ENA corredores, Gasolina Terpel, Uno, Puma, Tigo: Transporte
+Uber, DiDi, ENA corredores, Gasolina Terpel, Uno, Puma: Transporte
 Davivienda, Banco Agrícola, BAC, Credomatic, Banrural: Deudas
 Corte Argentino, Dominos, Pizza Hut, Starbucks, KFC, Rausch, McDonalds: Entretenimiento
 Asegúrate de que si la nota contiene la palabra "Uber", se clasifique como Transporte. Si contiene otra palabra, clasifícala según el contexto general, sin asumir automáticamente que es Transporte.
@@ -109,4 +109,3 @@ if archivo is not None:
             st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
         else:
             st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
-
