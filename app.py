@@ -144,7 +144,7 @@ if archivo is not None:
             st.download_button("Descargar como CSV", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
 
             excel_output = io.BytesIO()
-            with pd.ExcelWriter(excel_output, engine='xlsxwriter') as writer:
-                df_export['Fecha'] = pd.to_datetime(df_export['Fecha'], errors='coerce')
-                df_export.to_excel(writer, index=False, sheet_name='Transacciones', datetime_format='yyyy-mm-dd hh:mm:ss')
+            df_export['Fecha'] = pd.to_datetime(df_export['Fecha'], dayfirst=True, errors='coerce')
+            with pd.ExcelWriter(excel_output, engine='xlsxwriter', datetime_format='yyyy-mm-dd hh:mm:ss') as writer:
+                df_export.to_excel(writer, index=False, sheet_name='Transacciones')
             st.download_button("Descargar como Excel", data=excel_output.getvalue(), file_name="export_spendee.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
