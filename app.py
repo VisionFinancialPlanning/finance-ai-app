@@ -141,7 +141,11 @@ if archivo is not None:
                 'Categoria AI': 'Categoría'
             })
             df_export.to_csv(output, index=False)
-            st.download_button("Descargar archivo completo (Spendee + nota + todo)", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
+            st.download_button("Descargar como CSV", data=output.getvalue(), file_name="export_spendee.csv", mime="text/csv")
+
+            excel_output = io.BytesIO()
+            with pd.ExcelWriter(excel_output, engine='xlsxwriter') as writer:
+                df_export.to_excel(writer, index=False, sheet_name='Transacciones')
+            st.download_button("Descargar como Excel", data=excel_output.getvalue(), file_name="export_spendee.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), file_name="export_spendee.csv", mime="text/csv")
         else:
             st.error("Error: El número de categorías no coincide con el número de transacciones. Por favor, intenta nuevamente.")
-
