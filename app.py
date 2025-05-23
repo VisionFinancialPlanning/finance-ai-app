@@ -145,6 +145,11 @@ if archivo is not None:
 
             excel_output = io.BytesIO()
             df_export['Fecha'] = pd.to_datetime(df_export['Fecha'], dayfirst=True, errors='coerce')
-            with pd.ExcelWriter(excel_output, engine='xlsxwriter', datetime_format='yyyy-mm-dd hh:mm:ss') as writer:
+            with pd.ExcelWriter(excel_output, engine='xlsxwriter') as writer:
                 df_export.to_excel(writer, index=False, sheet_name='Transacciones')
+                workbook  = writer.book
+                worksheet = writer.sheets['Transacciones']
+                if 'Fecha' in df_export.columns:
+                    date_format = workbook.add_format({'num_format': 'yyyy-mm-dd hh:mm:ss'})
+                    worksheet.set_column('A:A', 20, date_format)
             st.download_button("Descargar como Excel", data=excel_output.getvalue(), file_name="export_spendee.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
